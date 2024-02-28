@@ -1,1 +1,1 @@
-from .MultiResUNet import MultiResUnet
+from .model import MultiResUnet
