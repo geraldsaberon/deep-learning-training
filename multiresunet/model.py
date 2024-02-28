@@ -146,6 +146,8 @@ class MultiResUnet(torch.nn.Module):
     '''
     def __init__(self, n_channels, n_classes, alpha=1.67):
         super().__init__()
+        self.n_channels = n_channels
+        self.n_classes = n_classes
 
         self.alpha = alpha
 
