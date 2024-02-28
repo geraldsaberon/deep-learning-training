@@ -137,20 +137,20 @@ class MultiResUnet(torch.nn.Module):
     MultiResUNet
 
     Arguments:
-        input_channels {int} -- number of channels in image
-        num_classes {int} -- number of segmentation classes
+        n_channels {int} -- number of channels in image
+        n_classes {int} -- number of segmentation classes
         alpha {float} -- alpha hyperparameter (default: 1.67)
 
     Returns:
         [keras model] -- MultiResUNet model
     '''
-    def __init__(self, input_channels, num_classes, alpha=1.67):
+    def __init__(self, n_channels, n_classes, alpha=1.67):
         super().__init__()
 
         self.alpha = alpha
 
         # Encoder Path
-        self.multiresblock1 = Multiresblock(input_channels,32)
+        self.multiresblock1 = Multiresblock(n_channels,32)
         self.in_filters1 = int(32*self.alpha*0.167)+int(32*self.alpha*0.333)+int(32*self.alpha* 0.5)
         self.pool1 =  torch.nn.MaxPool2d(2)
         self.respath1 = Respath(self.in_filters1,32,respath_length=4)
@@ -197,7 +197,7 @@ class MultiResUnet(torch.nn.Module):
         self.multiresblock9 = Multiresblock(self.concat_filters4,32)
         self.in_filters9 = int(32*self.alpha*0.167)+int(32*self.alpha*0.333)+int(32*self.alpha* 0.5)
 
-        self.conv_final = Conv2d_batchnorm(self.in_filters9, num_classes+1, kernel_size = (1,1), activation='None')
+        self.conv_final = Conv2d_batchnorm(self.in_filters9, n_classes+1, kernel_size = (1,1), activation='None')
 
     def forward(self,x : torch.Tensor)->torch.Tensor:
 
