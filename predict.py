@@ -1,6 +1,8 @@
 import argparse
 import logging
 import os
+from glob import glob
+from datetime import datetime
 
 import numpy as np
 import torch
@@ -81,7 +83,15 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
     in_files = args.input
+    if os.path.isdir(args.input[0]):
+        in_files = glob(f"{args.input}/*.tif")
+        args.input = in_files
+
     out_files = get_output_filenames(args)
+
+    out_dir = "output"
+    batch_out_dir = f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+    os.makedirs(os.path.join(out_dir, batch_out_dir))
 
     net = UNet(n_channels=3, n_classes=args.classes, bilinear=args.bilinear)
 
@@ -107,7 +117,7 @@ if __name__ == '__main__':
                            device=device)
 
         if not args.no_save:
-            out_filename = out_files[i]
+            out_filename = os.path.join(out_dir, batch_out_dir, out_files[i])
             result = mask_to_image(mask, mask_values)
             result.save(out_filename)
             logging.info(f'Mask saved to {out_filename}')
