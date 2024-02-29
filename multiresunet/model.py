@@ -144,11 +144,11 @@ class MultiResUnet(torch.nn.Module):
     Returns:
         [keras model] -- MultiResUNet model
     '''
-    def __init__(self, n_channels, n_classes, alpha=1.67):
+    def __init__(self, n_channels, n_classes, bilinear=False, alpha=1.67):
         super().__init__()
         self.n_channels = n_channels
         self.n_classes = n_classes
-
+        self.bilinear = bilinear
         self.alpha = alpha
 
         # Encoder Path
