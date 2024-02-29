@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
     in_files = args.input
     if os.path.isdir(args.input[0]):
-        in_files = glob(f"{args.input}/*.tif")
+        in_files = glob(f"{args.input[0]}/*.tif")
         args.input = in_files
 
     out_files = get_output_filenames(args)
