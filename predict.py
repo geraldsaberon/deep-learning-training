@@ -12,6 +12,7 @@ from torchvision import transforms
 
 from utils.data_loading import BasicDataset
 from unet import UNet
+from multiresunet import MultiResUnet
 from utils.utils import plot_img_and_mask
 
 def predict_img(net,
@@ -37,6 +38,7 @@ def predict_img(net,
 
 def get_args():
     parser = argparse.ArgumentParser(description='Predict masks from input images')
+    parser.add_argument('--arch', type=str, choices=['unet', 'multiresunet'], default='unet')
     parser.add_argument('--model', '-m', default='MODEL.pth', metavar='FILE',
                         help='Specify the file in which the model is stored')
     parser.add_argument('--input', '-i', metavar='INPUT', nargs='+', help='Filenames of input images', required=True)
@@ -94,7 +96,10 @@ if __name__ == '__main__':
     batch_out_dir = f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
     os.makedirs(os.path.join(out_dir, batch_out_dir))
 
-    net = UNet(n_channels=3, n_classes=args.classes, bilinear=args.bilinear)
+    model_parameters = {"n_channels": 3, "n_classes": args.classes, "bilinear": args.bilinear}
+    net = UNet(**model_parameters) \
+        if args.arch == "unet" else \
+        MultiResUnet(**model_parameters)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logging.info(f'Loading model {args.model}')
