@@ -17,6 +17,7 @@ import wandb
 from evaluate import evaluate
 from unet import UNet
 from multiresunet import MultiResUnet
+from deeplab.deeplab import DeepLab
 from utils.data_loading import BasicDataset, CarvanaDataset
 from utils.dice_score import dice_loss
 
@@ -170,7 +171,7 @@ def train_model(
 
 def get_args():
     parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
-    parser.add_argument('--arch', type=str, choices=['unet', 'multiresunet'], default='unet')
+    parser.add_argument('--arch', type=str, choices=['unet', 'multiresunet', "deeplab"], default='unet')
     parser.add_argument('--epochs', '-e', metavar='E', type=int, default=5, help='Number of epochs')
     parser.add_argument('--batch-size', '-b', dest='batch_size', metavar='B', type=int, default=1, help='Batch size')
     parser.add_argument('--learning-rate', '-l', metavar='LR', type=float, default=1e-5,
@@ -197,9 +198,14 @@ if __name__ == '__main__':
     # n_channels=3 for RGB images
     # n_classes is the number of probabilities you want to get per pixel
     model_parameters = {"n_channels": 3, "n_classes": args.classes, "bilinear": args.bilinear}
-    model = UNet(**model_parameters) \
-        if args.arch == "unet" else \
-        MultiResUnet(**model_parameters)
+    if args.arch == "unet":
+        model = UNet(**model_parameters)
+    elif args.arch == "multiresunet":
+        model = MultiResUnet(**model_parameters)
+    elif args.arch == "deeplab":
+        model = DeepLab(**model_parameters)
+    else:
+        raise NotImplementedError(f"{args.arch} is not supported architecture")
     model = model.to(memory_format=torch.channels_last)
 
     logging.info(f'Network:\n'
