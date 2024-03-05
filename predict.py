@@ -13,6 +13,7 @@ from torchvision import transforms
 from utils.data_loading import BasicDataset
 from unet import UNet
 from multiresunet import MultiResUnet
+from deeplab.deeplab import DeepLab
 from utils.utils import plot_img_and_mask
 
 def predict_img(net,
@@ -97,9 +98,14 @@ if __name__ == '__main__':
     os.makedirs(os.path.join(out_dir, batch_out_dir))
 
     model_parameters = {"n_channels": 3, "n_classes": args.classes, "bilinear": args.bilinear}
-    net = UNet(**model_parameters) \
-        if args.arch == "unet" else \
-        MultiResUnet(**model_parameters)
+    if args.arch == "unet":
+        net = UNet(**model_parameters)
+    elif args.arch == "multiresunet":
+        net = MultiResUnet(**model_parameters)
+    elif args.arch == "deeplab":
+        net = DeepLab(**model_parameters)
+    else:
+        raise NotImplementedError(f"{args.arch} is not supported architecture")
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logging.info(f'Loading model {args.model}')
