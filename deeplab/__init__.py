@@ -1,1 +1,1 @@
-from deeplab import DeepLab
+from .deeplab import DeepLab
