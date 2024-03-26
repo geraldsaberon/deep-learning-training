@@ -7,14 +7,18 @@ from itertools import chain
 from math import ceil
 
 class SegNet(BaseModel):
-    def __init__(self, num_classes, in_channels=3, pretrained=False, freeze_bn=False, **_):
+    def __init__(self, n_classes, n_channels=3, pretrained=False, freeze_bn=False, bilinear=False, **_):
         super(SegNet, self).__init__()
         vgg_bn = models.vgg16_bn(pretrained= pretrained)
         encoder = list(vgg_bn.features.children())
 
+        self.n_channels = n_channels
+        self.n_classes = n_classes
+        self.bilinear = bilinear
+
         # Adjust the input size
-        if in_channels != 3:
-            encoder[0] = nn.Conv2d(in_channels, 64, kernel_size=3, stride=1, padding=1)
+        if n_channels != 3:
+            encoder[0] = nn.Conv2d(n_channels, 64, kernel_size=3, stride=1, padding=1)
 
         # Encoder, VGG without any maxpooling
         self.stage1_encoder = nn.Sequential(*encoder[:6])
@@ -43,7 +47,7 @@ class SegNet(BaseModel):
         self.stage3_decoder = nn.Sequential(*decoder[18:27])
         self.stage4_decoder = nn.Sequential(*decoder[27:33])
         self.stage5_decoder = nn.Sequential(*decoder[33:],
-                nn.Conv2d(64, num_classes, kernel_size=3, stride=1, padding=1)
+                nn.Conv2d(64, n_classes, kernel_size=3, stride=1, padding=1)
         )
         self.unpool = nn.MaxUnpool2d(kernel_size=2, stride=2)
 
