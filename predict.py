@@ -14,6 +14,7 @@ from utils.data_loading import BasicDataset
 from unet import UNet
 from multiresunet import MultiResUnet
 from deeplab.deeplab import DeepLab
+from segnet import SegNet
 from utils.utils import plot_img_and_mask
 
 def predict_img(net,
@@ -39,7 +40,7 @@ def predict_img(net,
 
 def get_args():
     parser = argparse.ArgumentParser(description='Predict masks from input images')
-    parser.add_argument('--arch', type=str, choices=['unet', 'multiresunet', 'deeplab'], default='unet')
+    parser.add_argument('--arch', type=str, choices=['unet', 'multiresunet', 'deeplab', 'segnet'], default='unet')
     parser.add_argument('--model', '-m', default='MODEL.pth', metavar='FILE',
                         help='Specify the file in which the model is stored')
     parser.add_argument('--input', '-i', metavar='INPUT', nargs='+', help='Filenames of input images', required=True)
@@ -104,6 +105,8 @@ if __name__ == '__main__':
         net = MultiResUnet(**model_parameters)
     elif args.arch == "deeplab":
         net = DeepLab(**model_parameters)
+    elif args.arch == "segnet":
+        net = SegNet(**model_parameters)
     else:
         raise NotImplementedError(f"{args.arch} is not supported architecture")
 
