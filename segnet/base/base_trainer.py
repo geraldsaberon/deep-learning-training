@@ -5,11 +5,11 @@ import math
 import torch
 import datetime
 from torch.utils import tensorboard
-from utils import helpers
-from utils import logger
-import utils.lr_scheduler
-from utils.sync_batchnorm import convert_model
-from utils.sync_batchnorm import DataParallelWithCallback
+from ..utils import helpers
+from ..utils import logger
+from ..utils import lr_scheduler
+from ..utils.sync_batchnorm import convert_model
+from ..utils.sync_batchnorm import DataParallelWithCallback
 
 def get_instance(module, name, config, *args):
     # GET THE CORRESPONDING CLASS / FCT 
